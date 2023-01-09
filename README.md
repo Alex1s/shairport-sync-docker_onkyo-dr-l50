@@ -8,7 +8,7 @@ the `/boot/config.txt` file and is not commented out by a `#` character. If you 
 For more information about the overlay take a look [here](https://github.com/raspberrypi/firmware/blob/3a232374735c2bc5b7188ba2dfc0cbba8fa30d97/boot/overlays/README#L1279). (This may be outdated at the time you are reading this. So check at the master branch [here](https://github.com/raspberrypi/firmware/blob/master/boot/overlays/README) for the latest documentation of the `gpio-ir-tx` overlay.)
 The default pin used for transmission is `18`. You can also use a different pin. For example if you want to use pin `26`change the line in the `/boot/config.txt` to `dtoverlay=gpio-ir-tx,gpio_pin=26`.
 
-Once you rebooted the system a character device named `/dev/lirc0` should appear in your filesystem. To send commands we use the `ir-ctl` command from the ` v4l-utils` package which is pre-installed on all Raspberry Pi OS images as of (08.01.2023).
+Once you rebooted the system a character device named `/dev/lirc0` should appear in your filesystem. To send commands we use the `ir-ctl` command from the ` v4l-utils` package which is pre-installed on all Raspberry Pi OS images as of (08.01.2023). We now run `ir-ctl --scancode=necx:0xD26D04` to send a `necx` message with the scancode `0xD26D04`. See the table below for a list of scancodes relevant for this project.
 
 ## Relevant decoded commands and other facts about the IR protocol
 ## Decoded commands
