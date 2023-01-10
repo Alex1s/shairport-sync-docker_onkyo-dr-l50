@@ -10,6 +10,68 @@ The default pin used for transmission is `18`. You can also use a different pin.
 
 Once you rebooted the system a character device named `/dev/lirc0` should appear in your filesystem. To send commands we use the `ir-ctl` command from the ` v4l-utils` package which is pre-installed on all Raspberry Pi OS images as of (08.01.2023). We now run `ir-ctl --scancode=necx:0xD26D04` to send a `necx` message with the scancode `0xD26D04`. See the table below for a list of scancodes relevant for this project.
 
+### Proper arguments for ir-ctl
+Important is that we do not modulate our output signal. The IC of the DR-L50 expectes a de-modulated signal! De-modulation is performed by the IR receiver before it is passed to the receivers logic IC. `ir-ctl` offers an argument `--carrier` or short `-c`. I think we will need to set this to zero but it does not allow that:
+```
+$  ir-ctl --carrier=0 --scancode=necx:0xD26D04
+ir-ctl: cannot parse carrier `0'
+Try `ir-ctl --help' or `ir-ctl --usage' for more information.
+```
+It allows a carrier argument of `1`, `2`, ..., `500000`.
+It failes with a carrier argument of `500001`:
+```
+$ ir-ctl --carrier=500001 --scancode=necx:0xD26D04
+warning: /dev/lirc0: failed to set carrier: Invalid argument
+warning: /dev/lirc0: set send carrier returned -1, should return 0
+```
+As you can see these two errors messages follow a different scheme.
+And indeed are they emitted at different places.
+The first error is emitted here:
+```
+...
+	case 'c':
+		if (!strtoint(arg, "Hz", &arguments->carrier))
+			argp_error(state, _("cannot parse carrier `%s'"), arg);
+		break;
+...
+```
+And the second error is emitted here:
+```
+...
+static void lirc_set_send_carrier(int fd, const char *devname, unsigned features, unsigned carrier)
+{
+	if (features & LIRC_CAN_SET_SEND_CARRIER) {
+		int rc = ioctl(fd, LIRC_SET_SEND_CARRIER, &carrier);
+		if (rc < 0)
+			fprintf(stderr, _("warning: %s: failed to set carrier: %m\n"), devname);
+		if (rc != 0)
+			fprintf(stderr, _("warning: %s: set send carrier returned %d, should return 0\n"), devname, rc);
+	} else
+		fprintf(stderr, _("warning: %s: does not support setting send carrier\n"), devname);
+}
+...
+```
+The first one was directly emitted from the `ir-ctl` code. `ir-ctl` never tried to call `ioctl(fd, LIRC_SET_SEND_CARRIER, &carrier)` with carrier set to `0`. In contrast the second one was forwared from a failed call to `ioctl(fd, LIRC_SET_SEND_CARRIER, &carrier)` with carrier set to `500001`. 
+
+Why does `strtoint` fail with arguments `(arg, "Hz", &arguments->carrier)` where `arg` is set to `0`? Lets take a look at the source code:
+
+```
+static bool strtoint(const char *p, const char *unit, unsigned *ret)
+{
+    char *end;
+    long arg = strtol(p, &end, 10);
+    if (end == NULL || (end[0] != 0 && strcasecmp(end, unit) != 0))
+        return false;
+
+    if (arg < 0 || arg >= 0xffffff)
+        return false;
+
+    *ret = arg;
+    return true;
+}
+```
+Looking at the function I still do not have a clue ...
+
 ## Relevant decoded commands and other facts about the IR protocol
 ## Decoded commands
 The remote for the receiver uses the NECX protocl.
