@@ -16,7 +16,7 @@ Important is that we do not modulate our output signal. The IC of the DR-L50 exp
 ir-ctl: cannot parse carrier `0'
 Try `ir-ctl --help' or `ir-ctl --usage' for more information.
 ```
-Update your `ir-ctl` binary by updating the `v4l-utils` package. You may need to upgrade Raspbian / Raspberry Pi OS. Old repos only contain the old version of the `v4l-package`. You can check yur `ir-ctl` verion by running `ir-ctl --version`. In my case the version `IR raw version 1.16.3` caused the error when setting `carrier` to zero but when compiling from the latest sources I had version `IR ctl version 1.23.0` and this version did not produce the error.
+Update your `ir-ctl` binary by updating the `v4l-utils` package. You may need to upgrade Raspbian / Raspberry Pi OS. Old repos only contain the old version of the `v4l-package`. You can check yur `ir-ctl` version by running `ir-ctl --version`. In my case the version `IR raw version 1.16.3` produced the error above when setting `carrier` to zero but when upgrading to the latest Rasperry Pi OS I had version `IR ctl version 1.20.0` and this version did not produce the error.
 
 ## Relevant decoded commands and other facts about the IR protocol
 ## Decoded commands
