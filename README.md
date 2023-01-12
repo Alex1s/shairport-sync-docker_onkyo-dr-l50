@@ -10,8 +10,22 @@ The default pin used for transmission is `18`. You can also use a different pin.
 
 Once you rebooted the system a character device named `/dev/lirc0` should appear in your filesystem. To send commands we use the `ir-ctl` command from the ` v4l-utils` package which is pre-installed on all Raspberry Pi OS images as of (08.01.2023). We now run `ir-ctl --scancode=necx:0xD26D04` to send a `necx` message with the scancode `0xD26D04`. See the table below for a list of scancodes relevant for this project.
 
-### Proper arguments for ir-ctl
-Important is that we do not modulate our output signal. The IC of the DR-L50 expectes a de-modulated signal! De-modulation is performed by the IR receiver before it is passed to the receivers logic IC. `ir-ctl` offers an argument `--carrier` or short `-c`. This needs to be set zero, so that the output signal is not modulated. In case you get a an error when trying to set the carrier argument to zero i.e. you run `ir-ctl --carrier=0 --scancode=necx:0xD26D04` and get the following output:
+### Sending unmodulated IR signals
+Important is that we do not modulate our output signal. The IC of the DR-L50 expectes a de-modulated signal! De-modulation is performed by the IR receiver before it is passed to the receivers logic IC. `ir-ctl` offers an argument `--carrier` or short `-c`.
+Now you maybe think, we could simple add the `--carrier=0` to the `ir-ctl` command to get an unmodulated signal. But of course that would be way to easy.
+You will get a modulated signal at around 38kHz, just as the NEC [specifications](https://techdocs.altium.com/display/FPGA/NEC%2bInfrared%2bTransmission%2bProtocol) demands it. No matter what you carrier frequency you specify. Why? Take a look at [this](https://github.com/torvalds/linux/blob/e8f60cd7db24f94f2dbed6bec30dd16a68fc0828/drivers/media/rc/lirc_dev.c#L290) if-statement.
+
+Okay, so what do we do now? We will have to convert our scancodes to pulses and spaces, save them to a file and then we can use the `--send` or short `-s` option to send these pulses / spaces. Now the kernel will not overwrite our `--carrier` option.
+Do not worry, you will not have to do this by hand. Take a look at the `necx_scancode_to_mode2.py` file in this repo. It takes a scancode as positional argument and outputs corresponding [mode2](https://www.lirc.org/html/mode2.html) file to stdout. Here an example how we can finally send an unmodulated signal:
+```
+/necx_scancode_to_mode2.py 0xD26D04 > mode.txt
+ir-ctl --carrier=0 --send mode.txt
+```
+
+
+
+#### Getting an error when setting `--carrier` to zero?
+In case you get a an error when trying to set the carrier argument to zero i.e. you run `ir-ctl --carrier=0 --scancode=necx:0xD26D04` and get the following output:
 ```
 ir-ctl: cannot parse carrier `0'
 Try `ir-ctl --help' or `ir-ctl --usage' for more information.
