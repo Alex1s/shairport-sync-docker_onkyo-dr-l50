@@ -42,9 +42,9 @@ space 4500  # LP (long pause)'''
         elif i == 1:
             res += f'\n# second address byte: {hex((scancode & 0xFF00) >> 8)}\n'
         elif i == 2:
-            res += f'\n# command address byte: {hex((scancode & 0xFF00) >> 8)}\n'
+            res += f'\n# command byte: {hex(scancode & 0xFF)}\n'
         elif i == 3:
-            res += f'\n# command address byte (inverted)\n'
+            res += f'\n# command byte (inverted)\n'
 
         for bit in bits[i * 8:i * 8 + 8]:
             res += 'pulse  562\n'  # actually 562.5, but no decimals allowed; thus we round the pulse timing down and
