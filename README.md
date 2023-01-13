@@ -21,6 +21,7 @@ Do not worry, you will not have to do this by hand. Take a look at the `necx_sca
 /necx_scancode_to_mode2.py 0xD26D04 > mode.txt
 ir-ctl --carrier=0 --send mode.txt
 ```
+If you are too lazy for that use the files I already generated. You can find them in the `mode2` directory. This directory contains files for `power_on`, `power_off`, `volume_up` and `volume_down`.
 
 
 
@@ -46,7 +47,7 @@ Thus the scancode is 3 bytes wide.
 | VOLUME_DOWN | 0xD2 | 0x6D | 0x03 | 0xFC | 0xD26D03 |
 
 Interesting to observe here is that the POWER_OFF key has a slightly different address (a single bit is flipped) than the other three keys.
-What is the reason? Something related to legacy devices? Or a mistake on my side? We will see ...
+What is the reason? Something related to legacy devices? In any case it is not a mistake on my side as I tested these scancodes and they work.
 
 ## Repeating commands
 While the NEC IR standard does specifiy a repeat code to efficiently repeat messages, the remote of the DR-L50 does not use them. It just re-transmitts the entire message. Is it thinkable that the IR remote does not use repeat codes but the receiver does indeed support them?
