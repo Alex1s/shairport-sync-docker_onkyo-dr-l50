@@ -1,0 +1,78 @@
+# Leader code (header)
+pulse 9000  # AGC (automatic gain control) pulse
+space 4500  # LP (long pause)
+
+# first address byte: 0xd2
+pulse  562
+space 563  # 0
+pulse  562
+space  1688  # 1
+pulse  562
+space 563  # 0
+pulse  562
+space 563  # 0
+pulse  562
+space  1688  # 1
+pulse  562
+space 563  # 0
+pulse  562
+space  1688  # 1
+pulse  562
+space  1688  # 1
+
+# second address byte: 0x6c
+pulse  562
+space 563  # 0
+pulse  562
+space 563  # 0
+pulse  562
+space  1688  # 1
+pulse  562
+space  1688  # 1
+pulse  562
+space 563  # 0
+pulse  562
+space  1688  # 1
+pulse  562
+space  1688  # 1
+pulse  562
+space 563  # 0
+
+# command byte: 0x47
+pulse  562
+space  1688  # 1
+pulse  562
+space  1688  # 1
+pulse  562
+space  1688  # 1
+pulse  562
+space 563  # 0
+pulse  562
+space 563  # 0
+pulse  562
+space 563  # 0
+pulse  562
+space  1688  # 1
+pulse  562
+space 563  # 0
+
+# command byte (inverted)
+pulse  562
+space 563  # 0
+pulse  562
+space 563  # 0
+pulse  562
+space 563  # 0
+pulse  562
+space  1688  # 1
+pulse  562
+space  1688  # 1
+pulse  562
+space  1688  # 1
+pulse  562
+space 563  # 0
+pulse  562
+space  1688  # 1
+
+# stop bit
+pulse  562
