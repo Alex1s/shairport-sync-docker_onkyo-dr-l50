@@ -39,14 +39,16 @@ async def fulfil_expectations():
                 expected_onkyo_volume = ir_tx.airplay_volume_to_receiver_volume(state.expectation.volume.volume)
                 if expected_onkyo_volume != state.reality.volume.volume:
                     logger.warning(f'volume difference detected: {state.expectation.volume.volume} != {state.reality.volume.volume}')
-
-                    if expected_onkyo_volume > state.reality.volume.volume:
-                        state.reality.volume.volume += 1
-                        await ir_tx.volume_up()
+                    if state.reality.power.power == Power.ON:
+                        if expected_onkyo_volume > state.reality.volume.volume:
+                            state.reality.volume.volume += 1
+                            await ir_tx.volume_up()
+                        else:
+                            state.reality.volume.volume -= 1
+                            await ir_tx.volume_down()
+                        continue
                     else:
-                        state.reality.volume.volume -= 1
-                        await ir_tx.volume_down()
-                    continue
+                        logger.warning('Not changing volume because the receiver is off')
 
                 # we changed nothing, thus we can wait for a change
                 break
