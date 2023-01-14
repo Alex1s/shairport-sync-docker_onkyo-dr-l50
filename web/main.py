@@ -6,7 +6,7 @@ from fastapi import FastAPI
 from asyncio import Future
 
 from logger import logger
-from models import PowerModel, VolumeModel
+from models import PowerModel, AirplayVolumeModel
 from state import state
 import infrared_transmitter as ir_tx
 
@@ -24,18 +24,20 @@ async def fulfil_expectations():
                 # power is first priority
                 if state.expectation.power != state.reality.power:
                     logger.warning(f'power difference detected: {state.expectation.power.power} != {state.reality.power.power}')
+                    state.reality.power = state.expectation.power
                     await ir_tx.power(state.expectation.power.power)
                     continue
 
                 # volume is second priority
                 expected_onkyo_volume = ir_tx.airplay_volume_to_receiver_volume(state.expectation.volume.volume)
-                real_onkyo_volume = ir_tx.airplay_volume_to_receiver_volume(state.reality.volume.volume)
-                if expected_onkyo_volume != real_onkyo_volume:
+                if expected_onkyo_volume != state.reality.volume.volume:
                     logger.warning(f'volume difference detected: {state.expectation.volume.volume} != {state.reality.volume.volume}')
 
-                    if expected_onkyo_volume > real_onkyo_volume:
+                    if expected_onkyo_volume > state.reality.volume.volume:
+                        state.reality.volume.volume += 1
                         await ir_tx.volume_up()
                     else:
+                        state.reality.volume.volume -= 1
                         await ir_tx.volume_down()
                     continue
 
@@ -73,11 +75,11 @@ async def put_volume(power: PowerModel):
 
 
 @app.get("/volume", tags=["volume"])
-async def get_volume() -> VolumeModel:
+async def get_volume() -> AirplayVolumeModel:
     return state.reality.volume
 
 
 @app.put("/volume", tags=["volume"])
-async def put_volume(volume: VolumeModel):
+async def put_volume(volume: AirplayVolumeModel):
     state.expectation.volume = volume
     expectations_change()

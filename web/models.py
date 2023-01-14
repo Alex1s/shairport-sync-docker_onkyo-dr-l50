@@ -13,5 +13,9 @@ class PowerModel(BaseModel):
     power: Power
 
 
-class VolumeModel(BaseModel):
+class AirplayVolumeModel(BaseModel):
     volume: float = Query(ge=-144, le=0)
+
+
+class OnkyoVolumeModel(BaseModel):
+    volume: int = Query(ge=0, le=80)

@@ -1,16 +1,21 @@
 from pydantic import BaseModel
 
-from models import PowerModel, VolumeModel, Power
+from models import PowerModel, AirplayVolumeModel, Power, OnkyoVolumeModel
 
 
-class State(BaseModel):
+class StateExpectation(BaseModel):
     power: PowerModel = PowerModel(power=Power.OFF)
-    volume: VolumeModel = VolumeModel(volume=-144)
+    volume: AirplayVolumeModel = AirplayVolumeModel(volume=-144)
+
+
+class StateReality(BaseModel):
+    power: PowerModel = PowerModel(power=Power.OFF)
+    volume: OnkyoVolumeModel = OnkyoVolumeModel(volume=0)
 
 
 class GlobalState(BaseModel):
-    expectation: State = State()
-    reality: State = State()
+    expectation: StateExpectation = StateExpectation()
+    reality: StateReality = StateReality()
 
 
 state = GlobalState()
