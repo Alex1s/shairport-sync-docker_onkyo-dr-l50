@@ -50,6 +50,20 @@ Interesting to observe here is that the POWER_OFF key has a slightly different a
 What is the reason? Something related to legacy devices? In any case it is not a mistake on my side as I tested these scancodes and they work.
 
 ## Repeating commands
-While the NEC IR standard does specifiy a repeat code to efficiently repeat messages, the remote of the DR-L50 does not use them. It just re-transmitts the entire message. Is it thinkable that the IR remote does not use repeat codes but the receiver does indeed support them?
+While the NEC IR standard does specifiy a repeat code to efficiently repeat messages, the remote of the DR-L50 does not use them. It just re-transmitts the entire message. Is it thinkable that the IR remote does not use repeat codes but the receiver does indeed support them? Yes, it is thinkable. But no, it is not reality. The receiver does not support repeat codes. At least following repeat code did not work:
+```
+space 40000
+pulse 9000
+space 2250
+pulse 56
+```
 
-In any case, the remote space two messages 38.8ms appart. It might be worthwhile to check if a shorter space is still accepted by the receiver.
+Additionally the remote spaces two messages 38.8ms appart. It might be worthwhile to check if a shorter space is still accepted by the receiver.
+It turns out it is not. Actually during my experiments it appears to be the case that for reliable transmission the space needs to be even greater!
+I did experiment the following way:
+
+1. Turn the volume to zero by hand
+2. Run following command `ir-ctl --gap <insert gap to test here> --send volume_up.mode2 --send volume_up.mode2 --send volume_up.mode2`
+3. Check that the volume did indeed increase by 3
+
+I repeated step 2 and 3 10 times, thus the volume should be at 30 after finishing the experiment successfully, below 30 if unsuccessfully. The smallest gap I was able to find at a 100μs granularity is `63.8ms`. But I beleave that this value is still too low enough to be reliable over a long timescale.
