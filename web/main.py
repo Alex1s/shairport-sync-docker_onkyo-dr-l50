@@ -6,7 +6,7 @@ from fastapi import FastAPI
 from asyncio import Future
 
 from logger import logger
-from models import PowerModel, AirplayVolumeModel
+from models import PowerModel, AirplayVolumeModel, Power
 from state import state
 import infrared_transmitter as ir_tx
 
@@ -23,9 +23,16 @@ async def fulfil_expectations():
             while True:
                 # power is first priority
                 if state.expectation.power != state.reality.power:
-                    logger.warning(f'power difference detected: {state.expectation.power.power} != {state.reality.power.power}')
+                    logger.warning(f'Changing power state: {state.reality.power.power} -> {state.expectation.power.power}')
                     state.reality.power = state.expectation.power
-                    await ir_tx.power(state.expectation.power.power)
+                    if state.expectation.power.power == Power.OFF:
+                        await ir_tx.power_on()
+                        await ir_tx.volume_down(num=80)  # reset to zero
+                        new_volume = ir_tx.airplay_volume_to_receiver_volume(state.expectation.volume.volume)
+                        state.reality.volume = new_volume
+                        await ir_tx.volume_up(num=new_volume)
+                    else:
+                        await ir_tx.power_off()
                     continue
 
                 # volume is second priority
