@@ -29,7 +29,7 @@ async def fulfil_expectations():
                         await ir_tx.power_on()
                         await ir_tx.volume_down(num=80)  # reset to zero
                         new_volume = ir_tx.airplay_volume_to_receiver_volume(state.expectation.volume.volume)
-                        state.reality.volume = new_volume
+                        state.reality.volume.volume = new_volume
                         await ir_tx.volume_up(num=new_volume)
                     else:
                         await ir_tx.power_off()
