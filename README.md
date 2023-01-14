@@ -21,6 +21,7 @@ Do not worry, you will not have to do this by hand. Take a look at the `necx_sca
 /necx_scancode_to_mode2.py 0xD26D04 > mode.txt
 ir-ctl --carrier=0 --send mode.txt
 ```
+If you are too lazy for that use the files I already generated. You can find them in the `mode2` directory. This directory contains files for `power_on`, `power_off`, `volume_up` and `volume_down`.
 
 
 
@@ -46,9 +47,23 @@ Thus the scancode is 3 bytes wide.
 | VOLUME_DOWN | 0xD2 | 0x6D | 0x03 | 0xFC | 0xD26D03 |
 
 Interesting to observe here is that the POWER_OFF key has a slightly different address (a single bit is flipped) than the other three keys.
-What is the reason? Something related to legacy devices? Or a mistake on my side? We will see ...
+What is the reason? Something related to legacy devices? In any case it is not a mistake on my side as I tested these scancodes and they work.
 
 ## Repeating commands
-While the NEC IR standard does specifiy a repeat code to efficiently repeat messages, the remote of the DR-L50 does not use them. It just re-transmitts the entire message. Is it thinkable that the IR remote does not use repeat codes but the receiver does indeed support them?
+While the NEC IR standard does specifiy a repeat code to efficiently repeat messages, the remote of the DR-L50 does not use them. It just re-transmitts the entire message. Is it thinkable that the IR remote does not use repeat codes but the receiver does indeed support them? Yes, it is thinkable. But no, it is not reality. The receiver does not support repeat codes. At least following repeat code did not work:
+```
+space 40000
+pulse 9000
+space 2250
+pulse 56
+```
 
-In any case, the remote space two messages 38.8ms appart. It might be worthwhile to check if a shorter space is still accepted by the receiver.
+Additionally the remote spaces two messages 38.8ms appart. It might be worthwhile to check if a shorter space is still accepted by the receiver.
+It turns out it is not. Actually during my experiments it appears to be the case that for reliable transmission the space needs to be even greater!
+I did experiment the following way:
+
+1. Turn the volume to zero by hand
+2. Run following command `ir-ctl --gap <insert gap to test here> --send volume_up.mode2 --send volume_up.mode2 --send volume_up.mode2 <... repeat the "send" argument so that the command is sent 80 times in total>` 
+3. Check that the volume did indeed increase to MAX (80)
+
+I repeated step 2. and 3. 5 times. What I can tell you is that a gap of 65ms did not work reliable in that experiment and a gap of 70ms did work reliable. But do consider that `n = 5` is not a strong argument in statistics. 
