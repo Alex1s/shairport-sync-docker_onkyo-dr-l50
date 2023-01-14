@@ -31,7 +31,7 @@ def airplay_volume_to_receiver_volume(airplay_volume: float) -> int:
 
 
 async def ir_ctl(mode2_file: str, repeat: int = 0) -> None:
-    send_args = [f'--send={POWER_ON_MODE2}'] * (repeat + 1)
+    send_args = [f'--send={mode2_file}'] * (repeat + 1)
     all_args = [IR_CTL_COMMAND, '--carrier=0'] + send_args
     logger.warning(f'Running ir-ctl: {all_args}')
     subprocess = await asyncio.subprocess.create_subprocess_exec(*all_args)
