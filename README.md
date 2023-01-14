@@ -63,7 +63,7 @@ It turns out it is not. Actually during my experiments it appears to be the case
 I did experiment the following way:
 
 1. Turn the volume to zero by hand
-2. Run following command `ir-ctl --gap <insert gap to test here> --send volume_up.mode2 --send volume_up.mode2 --send volume_up.mode2`
-3. Check that the volume did indeed increase by 3
+2. Run following command `ir-ctl --gap <insert gap to test here> --send volume_up.mode2 --send volume_up.mode2 --send volume_up.mode2 <... repeat the "send" argument so that the command is sent 80 times in total>` 
+3. Check that the volume did indeed increase to MAX (80)
 
-I repeated step 2 and 3 10 times, thus the volume should be at 30 after finishing the experiment successfully, below 30 if unsuccessfully. The smallest gap I was able to find at a 100μs granularity is `63.8ms`. But I beleave that this value is still too low enough to be reliable over a long timescale.
+I repeated step 2. and 3. 5 times. What I can tell you is that a gap of 65ms did not work reliable in that experiment and a gap of 70ms did work reliable. But do consider that `n = 5` is not a strong argument in statistics. 
