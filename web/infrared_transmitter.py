@@ -61,10 +61,14 @@ async def power_off() -> None:
 
 
 async def volume_up(num: int = 1) -> None:
+    if num == 0:
+        return
     await ir_ctl(VOLUME_UP_MODE2, num - 1)
     await asyncio.sleep(VOLUME_GAP)
 
 
 async def volume_down(num: int = 1) -> None:
+    if num == 0:
+        return
     await ir_ctl(VOLUME_DOWN_MODE2, num - 1)
     await asyncio.sleep(VOLUME_GAP)
