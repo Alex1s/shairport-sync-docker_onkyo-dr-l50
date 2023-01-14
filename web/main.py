@@ -25,7 +25,7 @@ async def fulfil_expectations():
                 if state.expectation.power != state.reality.power:
                     logger.warning(f'Changing power state: {state.reality.power.power} -> {state.expectation.power.power}')
                     state.reality.power = state.expectation.power
-                    if state.expectation.power.power == Power.OFF:
+                    if state.expectation.power.power == Power.ON:
                         await ir_tx.power_on()
                         await ir_tx.volume_down(num=80)  # reset to zero
                         new_volume = ir_tx.airplay_volume_to_receiver_volume(state.expectation.volume.volume)
