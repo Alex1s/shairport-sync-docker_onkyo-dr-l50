@@ -15,16 +15,10 @@ VOLUME_GAP = 70e-3  # 70ms
 
 
 def airplay_volume_to_receiver_volume(airplay_volume: float) -> int:
-    """
-    We take a function of the form f(x) = c * a^x
-    We require f(0) = 80, thus c=80
-    We require f(-30) = .1, thus a≈1.24959611477344
-    :param airplay_volume: airplay volume
-    :return: onkyp volume
-    """
-    c = 80
-    a = 1.24959611477344
-    onkyo_volume = round(c * pow(a, airplay_volume))
+    if airplay_volume < -30:
+        onkyo_volume = 0
+    else:
+        onkyo_volume = round((30 + airplay_volume) * 80 / 30)
     logger.warning(f'Volume converted: {airplay_volume} -> {onkyo_volume}')
     assert 0 <= onkyo_volume <= 80
     return onkyo_volume
