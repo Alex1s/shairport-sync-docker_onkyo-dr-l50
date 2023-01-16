@@ -1,0 +1,14 @@
+services:
+  shairport-sync:
+    build: shairport-sync-docker-curl
+    network_mode: host
+    devices:
+      - /dev/snd
+    environment:
+      API_HOST: localhost
+      API_PORT: 80
+      API_PATH: /volume
+    volumes:
+      - ./shairport-sync-docker-curl/power:/usr/bin/power:ro
+      - ./shairport-sync-docker-curl/volume:/usr/bin/volume:ro
+      - ./shairport-sync-docker-curl/shairport-sync.conf:/etc/shairport-sync.conf:ro
