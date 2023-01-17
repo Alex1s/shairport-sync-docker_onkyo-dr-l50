@@ -1,4 +1,14 @@
 services:
+  api:
+    build: api
+    environment:
+      API_PORT: 80
+    ports:
+      - 80:80
+    devices:
+      - /dev/lirc0
+    volumes:
+      - ./mode2:/mode2:ro
   shairport-sync:
     build: shairport-sync-docker-curl
     network_mode: host
