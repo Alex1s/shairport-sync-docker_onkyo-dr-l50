@@ -26,6 +26,7 @@ async def fulfil_expectations():
                     logger.warning(f'Changing power state: {state.reality.power.power} -> {state.expectation.power.power}')
                     state.reality.power = state.expectation.power
                     if state.expectation.power.power == Power.ON:
+                        state.reality.volume.volume = 0
                         await ir_tx.power_on()
                         await ir_tx.volume_down(num=80)  # reset to zero
                     else:
@@ -35,7 +36,7 @@ async def fulfil_expectations():
                 # volume is second priority
                 expected_onkyo_volume = ir_tx.airplay_volume_to_receiver_volume(state.expectation.volume.volume)
                 if expected_onkyo_volume != state.reality.volume.volume:
-                    logger.warning(f'volume difference detected: {state.expectation.volume.volume} != {state.reality.volume.volume}')
+                    logger.warning(f'volume difference detected: expectation({expected_onkyo_volume}) != reality({state.reality.volume.volume})')
                     if state.reality.power.power == Power.ON:
                         if expected_onkyo_volume > state.reality.volume.volume:
                             state.reality.volume.volume += 1
