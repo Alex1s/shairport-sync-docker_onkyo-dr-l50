@@ -1,5 +1,6 @@
 services:
   api:
+    restart: unless-stopped
     build: api
     environment:
       API_PORT: 80
@@ -10,6 +11,7 @@ services:
     volumes:
       - ./mode2:/mode2:ro
   shairport-sync:
+    restart: unless-stopped
     build: shairport-sync-docker-curl
     network_mode: host
     devices:
