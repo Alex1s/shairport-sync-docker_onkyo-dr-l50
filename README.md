@@ -67,3 +67,11 @@ I did experiment the following way:
 3. Check that the volume did indeed increase to MAX (80)
 
 I repeated step 2. and 3. 5 times. What I can tell you is that a gap of 65ms did not work reliable in that experiment and a gap of 70ms did work reliable. But do consider that `n = 5` is not a strong argument in statistics. 
+
+## Avoiding problems with mDNS
+When running `shairport-sync` in docker using network mode `host` you might notice following message in the container logs:
+
+```*** WARNING: Detected another IPv4 mDNS stack running on this host. This makes mDNS unreliable and is thus not recommended. ***```
+
+This mDNS stack shairport-sync is talking about is avahi-daemon running in the background per default on the Raspberry Pi OS. Disable it using following command:
+```systemctl disable avahi-daemon.service```
