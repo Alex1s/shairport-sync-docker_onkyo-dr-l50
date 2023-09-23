@@ -3,6 +3,8 @@ from enum import Enum
 from fastapi import Query
 from pydantic import BaseModel
 
+from const import MAX_VOLUME
+
 
 class Power(str, Enum):
     OFF = "OFF"
@@ -18,4 +20,4 @@ class AirplayVolumeModel(BaseModel):
 
 
 class OnkyoVolumeModel(BaseModel):
-    volume: int = Query(ge=0, le=80)
+    volume: int = Query(ge=0, le=MAX_VOLUME)

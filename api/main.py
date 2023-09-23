@@ -9,6 +9,7 @@ from logger import logger
 from models import PowerModel, AirplayVolumeModel, Power
 from state import state
 import infrared_transmitter as ir_tx
+from const import MAX_VOLUME, MAX_VOLUME_PHYS
 
 
 expectations_changed: Future = asyncio.get_event_loop().create_future()
@@ -28,7 +29,7 @@ async def fulfil_expectations():
                     if state.expectation.power.power == Power.ON:
                         state.reality.volume.volume = 0
                         await ir_tx.power_on()
-                        await ir_tx.volume_down(num=80)  # reset to zero
+                        await ir_tx.volume_down(num=MAX_VOLUME_PHYS)  # reset to zero
                     else:
                         await ir_tx.power_off()
                     continue
@@ -67,7 +68,7 @@ def expectations_change() -> None:
     expectations_changed = asyncio.get_event_loop().create_future()
 
 
-app = FastAPI(title="Onkyo DR L50")
+app = FastAPI(title="Onkyo TX SV9041")
 
 
 @app.get("/power", tags=["power"])
