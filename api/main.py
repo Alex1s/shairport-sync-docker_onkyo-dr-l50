@@ -73,7 +73,7 @@ app = FastAPI(title="Onkyo TX SV9041")
 
 @app.get("/power", tags=["power"])
 async def get_power() -> PowerModel:
-    return state.reality.power
+    return state.expectation.power
 
 
 @app.put("/power", tags=["power"])
@@ -84,7 +84,7 @@ async def put_volume(power: PowerModel):
 
 @app.get("/volume", tags=["volume"])
 async def get_volume() -> AirplayVolumeModel:
-    return state.reality.volume
+    return state.expectation.volume
 
 
 @app.put("/volume", tags=["volume"])
