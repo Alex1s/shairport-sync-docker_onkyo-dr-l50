@@ -9,10 +9,7 @@ from const import MAX_VOLUME
 
 IR_CTL_COMMAND = 'ir-ctl'
 
-POWER_ON_MODE2 = '/mode2/power_on.mode2'
-POWER_OFF_MODE2 = '/mode2/power_off.mode2'
-VOLUME_UP_MODE2 = '/mode2/volume_up.mode2'
-VOLUME_DOWN_MODE2 = '/mode2/volume_down.mode2'
+from scancodes import *
 
 GAP = 50e-3  # 50ms
 
@@ -27,8 +24,8 @@ def airplay_volume_to_receiver_volume(airplay_volume: float) -> int:
     return onkyo_volume
 
 
-async def ir_ctl(mode2_file: str, repeat: int = 0) -> None:
-    send_args = [f'--send={mode2_file}'] * (repeat + 1)
+async def ir_ctl(scancode: int, repeat: int = 0) -> None:
+    send_args = [f'--scancode=necx:{scancode}'] * (repeat + 1)
     all_args = [IR_CTL_COMMAND, '--carrier=38222', f'--gap={math.ceil(GAP * 1e6)}'] + send_args
     logger.warning(f'Running ir-ctl: {all_args}')
     subprocess = await asyncio.subprocess.create_subprocess_exec(*all_args)
@@ -46,25 +43,24 @@ async def power(p: Power) -> None:
 
 
 async def power_on() -> None:
-    await ir_ctl(POWER_ON_MODE2)
+    await ir_ctl(KEY_POWER)
     await asyncio.sleep(GAP)
 
 
 async def power_off() -> None:
-#    await ir_ctl(POWER_OFF_MODE2)
-    await ir_ctl(POWER_ON_MODE2)
+    await ir_ctl(KEY_POWER)
     await asyncio.sleep(GAP)
 
 
 async def volume_up(num: int = 1) -> None:
     if num == 0:
         return
-    await ir_ctl(VOLUME_UP_MODE2, num - 1)
+    await ir_ctl(KEY_VOLUME_UP, num - 1)
     await asyncio.sleep(GAP)
 
 
 async def volume_down(num: int = 1) -> None:
     if num == 0:
         return
-    await ir_ctl(VOLUME_DOWN_MODE2, num - 1)
+    await ir_ctl(KEY_VOLUME_DOWN, num - 1)
     await asyncio.sleep(GAP)
