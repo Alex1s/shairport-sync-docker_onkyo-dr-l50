@@ -2,7 +2,25 @@
 NEXC scancodes of the Onkyo RC-252S remote control transmitter
 """
 
-KEY_VOLUME_UP   = 0xd26d02
-KEY_VOLUME_DOWN = 0xd26d03
-KEY_POWER       = 0xd26d04
-KEY_MUTING      = 0xd26d05
+KEY_VOLUME_UP              = 0xd26d02
+KEY_VOLUME_DOWN            = 0xd26d03
+KEY_POWER                  = 0xd26d04
+KEY_MUTING                 = 0xd26d05
+
+KEY_INPUT_SELECTOR_TAPE_2  = 0xd26d07
+KEY_INPUT_SELECTOR_TAPE_1  = 0xd26d08
+KEY_INPUT_SELECTOR_CD      = 0xd26d09
+KEY_INPUT_SELECTOR_PHONO   = 0xd26d0a
+KEY_INPUT_SELECTOR_TUNER   = 0xd26d0b
+KEY_INPUT_SELECTOR_VIDEO_2 = 0xd26d0e
+KEY_INPUT_SELECTOR_VIDEO_3 = 0xd26d0d
+KEY_INPUT_SELECTOR_VIDEO_1 = 0xd26d0f
+
+KEY_SPEAKERS_MAIN          = 0xd26d59
+KEY_SPEAKERS_REMOTE        = 0xd26d5a
+
+KEY_SLEEP                  = 0xd26d5d
+
+KEY_MULTI_SOURCE_UP        = 0xd26dc2
+KEY_MULTI_SOURCE_DOWN      = 0xd26dc3
+KEY_MULTI_SOURCE           = 0xd26dcc
