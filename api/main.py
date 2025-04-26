@@ -6,7 +6,7 @@ from fastapi import FastAPI
 from asyncio import Future
 
 from logger import logger
-from models import PowerModel, AirplayVolumeModel, Power, MuteModel
+from models import PowerModel, AirplayVolumeModel, Power, MuteModel, InputModel, InputsModel, Input
 from state import state
 import infrared_transmitter as ir_tx
 from const import MAX_VOLUME, MAX_VOLUME_PHYS
@@ -32,6 +32,17 @@ async def fulfil_expectations():
                         await ir_tx.volume_down(num=MAX_VOLUME_PHYS)  # reset to zero
                     else:
                         await ir_tx.power_off()
+
+                    # after power on, always assure input
+                    await ir_tx.input(state.expectation.input.input)
+                    state.reality.input = state.expectation.input
+                
+                    continue
+                
+                # input is next priority
+                if state.expectation.input != state.reality.input:
+                    await ir_tx.input(state.expectation.input.input)
+                    state.reality.input = state.expectation.input
                     continue
 
                 # volume is second priority
@@ -109,3 +120,19 @@ async def get_mute() -> MuteModel:
 async def put_mute(mute: MuteModel):
     state.expectation.mute = mute
     expectations_change()
+
+
+@app.get("/input", tags=["input"])
+async def get_input() -> InputModel:
+    return state.expectation.input
+
+
+@app.put("/input", tags=["input"])
+async def put_input(input: InputModel):
+    state.expectation.input = input
+    expectations_change()
+
+
+@app.get("/inputs", tags=["input"])
+async def get_inputs() -> InputsModel:
+    return InputsModel(inputs=[input for input in Input])
