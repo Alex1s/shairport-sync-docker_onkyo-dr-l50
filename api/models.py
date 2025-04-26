@@ -21,3 +21,7 @@ class AirplayVolumeModel(BaseModel):
 
 class OnkyoVolumeModel(BaseModel):
     volume: int = Query(ge=0, le=MAX_VOLUME)
+
+
+class MuteModel(BaseModel):
+    mute: bool
