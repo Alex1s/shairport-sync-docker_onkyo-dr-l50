@@ -7,8 +7,8 @@ from const import MAX_VOLUME
 
 
 class Power(str, Enum):
-    OFF = "OFF"
-    ON = "ON"
+    OFF = "off"
+    ON = "on"
 
 
 class PowerModel(BaseModel):
