@@ -14,16 +14,6 @@ from scancodes import *
 GAP = 50e-3  # 50ms
 
 
-def airplay_volume_to_receiver_volume(airplay_volume: float) -> int:
-    if airplay_volume < -30:
-        onkyo_volume = 0
-    else:
-        onkyo_volume = round((30 + airplay_volume) * MAX_VOLUME / 30)
-    logger.warning(f'Volume converted: {airplay_volume} -> {onkyo_volume}')
-    assert 0 <= onkyo_volume <= MAX_VOLUME
-    return onkyo_volume
-
-
 async def ir_ctl(scancode: int, repeat: int = 0) -> None:
     send_args = [f'--scancode=necx:0x{scancode:x}'] * (repeat + 1)
     all_args = [IR_CTL_COMMAND, '--carrier=38222', f'--gap={math.ceil(GAP * 1e6)}'] + send_args

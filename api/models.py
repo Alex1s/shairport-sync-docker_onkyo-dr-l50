@@ -2,9 +2,7 @@ from enum import Enum
 from typing import List
 
 from fastapi import Query
-from pydantic import BaseModel
-
-from const import MAX_VOLUME
+from pydantic import BaseModel, NonNegativeInt
 
 
 class Power(str, Enum):
@@ -24,14 +22,11 @@ class InputModel(BaseModel):
 class PowerModel(BaseModel):
     power: Power
 
-
-class AirplayVolumeModel(BaseModel):
-    volume: float = Query(ge=-144, le=0)
-
+class VolumeModel(BaseModel):
+    volume: float = Query(ge=0, le=1)
 
 class OnkyoVolumeModel(BaseModel):
-    volume: int = Query(ge=0, le=MAX_VOLUME)
-
+    volume: NonNegativeInt
 
 class MuteModel(BaseModel):
     mute: bool

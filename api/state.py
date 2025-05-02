@@ -1,11 +1,11 @@
 from pydantic import BaseModel
 
-from models import PowerModel, AirplayVolumeModel, Power, OnkyoVolumeModel, MuteModel, InputModel, Input
+from models import PowerModel, VolumeModel, Power, OnkyoVolumeModel, MuteModel, InputModel, Input
 
 
 class StateExpectation(BaseModel):
     power: PowerModel = PowerModel(power=Power.OFF)
-    volume: AirplayVolumeModel = AirplayVolumeModel(volume=-7.5)
+    volume: VolumeModel = VolumeModel(volume=0.25)
     mute: MuteModel = MuteModel(mute=False)
     input: InputModel = InputModel(input=Input.TAPE_1)
 

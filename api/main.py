@@ -6,7 +6,7 @@ from fastapi import FastAPI
 from asyncio import Future
 
 from logger import logger
-from models import PowerModel, AirplayVolumeModel, Power, MuteModel, InputModel, InputsModel, Input
+from models import PowerModel, VolumeModel, Power, MuteModel, InputModel, InputsModel, Input
 from state import state
 import infrared_transmitter as ir_tx
 from const import MAX_VOLUME, MAX_VOLUME_PHYS
@@ -49,7 +49,7 @@ async def fulfil_expectations():
                 if state.expectation.mute.mute:
                     expected_onkyo_volume = 0
                 else:
-                    expected_onkyo_volume = ir_tx.airplay_volume_to_receiver_volume(state.expectation.volume.volume)
+                    expected_onkyo_volume = round(state.expectation.volume.volume * MAX_VOLUME[state.expectation.input.input])
                 if expected_onkyo_volume != state.reality.volume.volume:
                     logger.warning(f'volume difference detected: expectation({expected_onkyo_volume}) != reality({state.reality.volume.volume})')
                     if state.reality.power.power == Power.ON:
@@ -91,18 +91,18 @@ async def get_power() -> PowerModel:
 
 
 @app.put("/power", tags=["power"])
-async def put_volume(power: PowerModel):
+async def put_power(power: PowerModel):
     state.expectation.power = power
     expectations_change()
 
 
 @app.get("/volume", tags=["volume"])
-async def get_volume() -> AirplayVolumeModel:
+async def get_volume() -> VolumeModel:
     return state.expectation.volume
 
 
 @app.put("/volume", tags=["volume"])
-async def put_volume(volume: AirplayVolumeModel):
+async def put_volume(volume: VolumeModel):
     if volume.volume == -144:
         state.expectation.mute = MuteModel(mute=True)
     else:
