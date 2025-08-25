@@ -9,11 +9,9 @@ services:
       - /dev/lirc0
   shairport-sync:
     restart: unless-stopped
-    build: shairport-sync-docker-curl
+    image: mikebrady/shairport-sync:4.3.7
     network_mode: host
+    volumes:
+      - ./shairport-sync.conf:/etc/shairport-sync.conf:ro
     devices:
       - /dev/snd
-    environment:
-      API_HOST: localhost
-      API_PORT: 8080
-      API_PATH: /volume
