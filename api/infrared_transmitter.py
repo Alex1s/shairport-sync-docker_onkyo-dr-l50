@@ -17,7 +17,7 @@ GAP = 50e-3  # 50ms
 async def ir_ctl(scancode: int, repeat: int = 0) -> None:
     send_args = [f'--scancode=necx:0x{scancode:x}'] * (repeat + 1)
     all_args = [IR_CTL_COMMAND, '--carrier=38222', f'--gap={math.ceil(GAP * 1e6)}'] + send_args
-    logger.warning(f'Running ir-ctl: {all_args}')
+    logger.debug(f'Running ir-ctl: {all_args}')
     subprocess = await asyncio.subprocess.create_subprocess_exec(*all_args)
     result = await subprocess.wait()
     assert subprocess.stdout is None, f'ir-ctl stdout: {subprocess.stdout}'

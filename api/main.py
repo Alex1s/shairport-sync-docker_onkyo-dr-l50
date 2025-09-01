@@ -18,13 +18,13 @@ expectations_changed: Future = asyncio.get_event_loop().create_future()
 async def fulfil_expectations():
     try:
         while True:
-            logger.warning('Waiting for a change ...')
+            logger.debug('Waiting for a change ...')
             await expectations_changed
-            logger.warning('The long awaited change happened!')
+            logger.debug('The long awaited change happened!')
             while True:
                 # power is first priority
                 if state.expectation.power != state.reality.power:
-                    logger.warning(f'Changing power state: {state.reality.power.power} -> {state.expectation.power.power}')
+                    logger.debug(f'Changing power state: {state.reality.power.power} -> {state.expectation.power.power}')
                     state.reality.power = state.expectation.power
                     if state.expectation.power.power == Power.ON:
                         state.reality.volume.volume = 0
@@ -51,7 +51,7 @@ async def fulfil_expectations():
                 else:
                     expected_onkyo_volume = round(state.expectation.volume.volume * MAX_VOLUME[state.expectation.input.input])
                 if expected_onkyo_volume != state.reality.volume.volume:
-                    logger.warning(f'volume difference detected: expectation({expected_onkyo_volume}) != reality({state.reality.volume.volume})')
+                    logger.debug(f'volume difference detected: expectation({expected_onkyo_volume}) != reality({state.reality.volume.volume})')
                     if state.reality.power.power == Power.ON:
                         if expected_onkyo_volume > state.reality.volume.volume:
                             state.reality.volume.volume += 1
@@ -61,7 +61,7 @@ async def fulfil_expectations():
                             await ir_tx.volume_down()
                         continue
                     else:
-                        logger.warning('Not changing volume because the receiver is off')
+                        logger.debug('Not changing volume because the receiver is off')
 
                 # we changed nothing, thus we can wait for a change
                 break
@@ -77,7 +77,7 @@ expectation_fulfiler = asyncio.get_event_loop().create_task(fulfil_expectations(
 def expectations_change() -> None:
     global expectations_changed
     logger.setLevel(logging.DEBUG)
-    logger.warn('Expectations are changing.')
+    logger.debug('Expectations are changing.')
     expectations_changed.set_result(None)
     expectations_changed = asyncio.get_event_loop().create_future()
 
